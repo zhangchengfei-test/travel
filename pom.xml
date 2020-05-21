@@ -22,8 +22,6 @@
             <version>3.1.0</version>
             <scope>provided</scope>
         </dependency>
-
-
         <!--mysql驱动-->
         <dependency>
             <groupId>mysql</groupId>
@@ -91,8 +89,6 @@
             <artifactId>jackson-annotations</artifactId>
             <version>2.3.3</version>
         </dependency>
-
-
         <!--javaMail-->
         <dependency>
             <groupId>javax.mail</groupId>
@@ -110,9 +106,10 @@
             <artifactId>jedis</artifactId>
             <version>2.7.0</version>
         </dependency>
-
     </dependencies>
-
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
 
     <build>
         <!--maven插件-->
@@ -135,12 +132,11 @@
                 <version>2.1</version>
                 <configuration>
                     <!-- 通过maven tomcat7:run运行项目时，访问项目的端口号 -->
-                    <port>8080</port>
+                    <port>80</port>
                     <!-- 项目访问路径  本例：localhost:9090,  如果配置的aa， 则访问路径为localhost:9090/aa-->
                     <path>/travel</path>
                 </configuration>
             </plugin>
-
         </plugins>
     </build>
 </project>
