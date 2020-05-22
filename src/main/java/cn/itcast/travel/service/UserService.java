@@ -6,4 +6,5 @@ public interface UserService {
 
     public int regist(User user);
 
+    int active(String code);
 }

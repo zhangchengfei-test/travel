@@ -38,7 +38,7 @@
 			}
 			function checkEmail(){
 				var email = $("#email").val();
-				var reg_email = /^\w+@\w+\.\w+$/;
+				var reg_email = /^([a-zA-Z]|[0-9])(\w|\-|\.)+@[a-zA-Z0-9]+\.([a-zA-Z]{2,4})$/;
 				var flag = reg_email.test(email);
 				if (flag){
 					$("#email").css("border","");

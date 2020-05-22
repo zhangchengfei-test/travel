@@ -18,17 +18,37 @@ public class UserDaoImpl implements UserDao {
         try {
             String sql = "select * from tab_user where username = ?";
             user = jdbcTemplate.queryForObject(sql, new BeanPropertyRowMapper<User>(User.class), username);
-        }catch (Exception e){
-            e.printStackTrace();
+        } catch (Exception e) {
+
+        }
+        return user;
+    }
+
+    @Override
+    public User findUserByCode(String code) {
+        User user = null;
+        try {
+            String sql = "select * from tab_user where code = ?";
+            user = jdbcTemplate.queryForObject(sql, new BeanPropertyRowMapper<User>(User.class), code);
+        } catch (Exception e) {
+
         }
         return user;
     }
 
     @Override
     public int addUser(User user) {
-        String sql = "insert into tab_user(username,password,name,birthday,sex,telephone,email) values(?,?,?,?,?,?,?)";
+        String sql = "insert into tab_user(username,password,name,birthday,sex,telephone,email,status,code) values(?,?,?,?,?,?,?,?,?)";
 
-        int count = jdbcTemplate.update(sql, user.getUsername(), user.getPassword(), user.getName(), user.getBirthday(), user.getSex(), user.getTelephone(), user.getEmail());
+        int count = jdbcTemplate.update(sql, user.getUsername(), user.getPassword(), user.getName(), user.getBirthday(), user.getSex(), user.getTelephone(), user.getEmail(), user.getStatus(), user.getCode());
+
+        return count;
+    }
+
+    public int updateUserStatus(String code){
+        String sql = "update tab_user set status = 'Y' where code = ?";
+
+        int count = jdbcTemplate.update(sql, code);
 
         return count;
     }
