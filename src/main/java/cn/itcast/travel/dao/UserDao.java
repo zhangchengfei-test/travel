@@ -11,4 +11,7 @@ public interface UserDao {
     public int addUser(User user);
 
     int updateUserStatus(String code);
+
+
+    User findUserByUsernameAndPassword(User user);
 }

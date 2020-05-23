@@ -20,7 +20,15 @@
 	<script src="js/jquery-3.3.1.js"></script>
 	<script>
 		$(function () {
-
+			$("#btn_login").click(function () {
+				$.post("user/login",$("#loginForm").serialize(),function (data) {
+					if (data.flag){
+						location.href = "index.html";
+					}else {
+						$("#errorMsg").html(data.errorMsg)
+					}
+				});
+			});
 		});
 	</script>
 </head>
@@ -47,7 +55,7 @@
 					<input name="username" type="text" placeholder="请输入账号" autocomplete="off">
         			<input name="password" type="text" placeholder="请输入密码" autocomplete="off">
         			<div class="verify">
-					<input name="check" type="text" placeholder="请输入验证码" autocomplete="off">
+					<input name="check" type="text" id="check" placeholder="请输入验证码" autocomplete="off">
 					<span><img src="checkCode" alt="" onclick="changeCheckCode(this)"></span>
 					<script type="text/javascript">
 						//图片点击事件

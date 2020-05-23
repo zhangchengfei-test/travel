@@ -52,4 +52,16 @@ public class UserDaoImpl implements UserDao {
 
         return count;
     }
+
+    @Override
+    public User findUserByUsernameAndPassword(User user) {
+        User user1 = null;
+        try {
+            String sql = "select * from tab_user where username = ? and password = ?";
+            user1 = jdbcTemplate.queryForObject(sql, new BeanPropertyRowMapper<User>(User.class), user.getUsername(),user.getPassword());
+        } catch (Exception e) {
+
+        }
+        return user1;
+    }
 }

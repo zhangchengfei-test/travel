@@ -18,7 +18,7 @@ public class UserServiceImpl implements UserService {
         user.setCode(UuidUtil.getUuid());
         user.setStatus("N");
         int count = userDao.addUser(user);
-        String emailContent = "<a href='http://localhost:8080/travel/activeUserServlet?code="+user.getCode()+"'>旅游网激活用户</a>";
+        String emailContent = "<a href='http://localhost:8080/travel/user/active?code="+user.getCode()+"'>旅游网激活用户</a>";
         MailUtils.sendMail(user.getEmail(),emailContent,"激活邮件");
         return count;
     }
@@ -27,11 +27,20 @@ public class UserServiceImpl implements UserService {
     public int active(String code) {
         User userByCode = userDao.findUserByCode(code);
 
-        if (userByCode == null || "Y".equals(userByCode.getStatus())){
+        if (userByCode == null){
             return 0;
+        }
+
+        if ("Y".equals(userByCode.getStatus())){
+            return -1;
         }
 
         int count = userDao.updateUserStatus(code);
         return count;
+    }
+
+    @Override
+    public User login(User user) {
+        return userDao.findUserByUsernameAndPassword(user);
     }
 }

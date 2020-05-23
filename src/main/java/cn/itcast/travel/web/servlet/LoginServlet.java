@@ -5,7 +5,6 @@ import cn.itcast.travel.domain.User;
 import cn.itcast.travel.service.UserService;
 import cn.itcast.travel.service.impl.UserServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.util.BeanUtil;
 import org.apache.commons.beanutils.BeanUtils;
 
 import javax.servlet.ServletException;
@@ -18,11 +17,14 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 
-@WebServlet("/registUserServlet")
-public class RegistUserServlet extends HttpServlet {
+@WebServlet("/loginServlet")
+public class LoginServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        Map<String, String[]> parameterMap = request.getParameterMap();
+        User user = new User();
         response.setContentType("application/json;charset=utf-8");
-        String check = request.getParameter("login_check");
+
+        String check = request.getParameter("check");
         HttpSession session = request.getSession();
         String checkcode_server = (String) session.getAttribute("CHECKCODE_SERVER");
         session.removeAttribute("CHECKCODE_SERVER");
@@ -36,8 +38,6 @@ public class RegistUserServlet extends HttpServlet {
             return;
         }
 
-        Map<String, String[]> parameterMap = request.getParameterMap();
-        User user = new User();
         try {
             BeanUtils.populate(user,parameterMap);
         } catch (IllegalAccessException e) {
@@ -47,19 +47,27 @@ public class RegistUserServlet extends HttpServlet {
         }
 
         UserService userService = new UserServiceImpl();
+        User user1 = userService.login(user);
 
-        int regist = userService.regist(user);
-        ResultInfo resultInfo = new ResultInfo();
+        ResultInfo info = new ResultInfo();
 
-        if (regist == 0 ){
-            resultInfo.setFlag(false);
-            resultInfo.setErrorMsg("注册失败");
-        }else {
-            resultInfo.setFlag(true);
+        if (user1 == null){
+            info.setFlag(false);
+            info.setErrorMsg("登陆失败");
         }
+        if (user1 !=null && !"Y".equals(user1.getStatus())){
+            info.setFlag(false);
+            info.setErrorMsg("登陆失败");
+        }
+
+        if (user1 !=null && "Y".equals(user1.getStatus())){
+            request.getSession().setAttribute("user",user1);
+            info.setFlag(true);
+        }
+
         ObjectMapper objectMapper = new ObjectMapper();
-        String err_json = objectMapper.writeValueAsString(resultInfo);
-        response.getWriter().write(err_json);
+        String json = objectMapper.writeValueAsString(info);
+        response.getWriter().write(json);
 
     }
 
