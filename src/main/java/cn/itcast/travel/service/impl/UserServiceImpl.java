@@ -5,10 +5,14 @@ import cn.itcast.travel.dao.impl.UserDaoImpl;
 import cn.itcast.travel.domain.Category;
 import cn.itcast.travel.domain.User;
 import cn.itcast.travel.service.UserService;
+import cn.itcast.travel.util.JedisUtil;
 import cn.itcast.travel.util.MailUtils;
 import cn.itcast.travel.util.UuidUtil;
+import redis.clients.jedis.Jedis;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public class UserServiceImpl implements UserService {
     private UserDao userDao = new UserDaoImpl();
@@ -49,6 +53,30 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<Category> findAll() {
-        return userDao.findAll();
+        List<Category> categories = null;//userDao.findAll();
+
+        Jedis jedis = JedisUtil.getJedis();
+
+        //使用sortedset排序查询
+        Set<String> categorys = jedis.zrange("category", 0, -1);
+
+        if (categorys == null || categorys.size() == 0){
+            categories = userDao.findAll();
+
+            for (int i = 0; i < categories.size(); i++) {
+                jedis.zadd("category",categories.get(i).getCid(),categories.get(i).getCname());
+            }
+
+        }else {
+            categories = new ArrayList<>();
+            for (String name : categorys) {
+                Category c = new Category();
+                c.setCname(name);
+                categories.add(c);
+            }
+        }
+
+
+        return categories;
     }
 }
