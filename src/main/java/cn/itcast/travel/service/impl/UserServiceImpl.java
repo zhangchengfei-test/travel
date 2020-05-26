@@ -59,8 +59,8 @@ public class UserServiceImpl implements UserService {
         Jedis jedis = JedisUtil.getJedis();
 
         //使用sortedset排序查询
-        //Set<Tuple> categorys = jedis.zrangeWithScores("category", 0, -1);
-        Set<String> categorys = jedis.zrange("category", 0, -1);
+        Set<Tuple> categorys = jedis.zrangeWithScores("category", 0, -1);
+        //Set<String> categorys = jedis.zrange("category", 0, -1);
 
         if (categorys == null || categorys.size() == 0){
             categories = userDao.findAll();
@@ -72,15 +72,15 @@ public class UserServiceImpl implements UserService {
         }else {
             //System.out.println("从redis中查询.....");
             categories = new ArrayList<>();
-            //for (Tuple tuple : categorys) {
-//                Category c = new Category();
-//                c.setCname(tuple.getElement());
-//                c.setCid((int) tuple.getScore());
-//                categories.add(c);
-            for (String name : categorys) {
+            for (Tuple tuple : categorys) {
                 Category c = new Category();
-                c.setCname(name);
+                c.setCname(tuple.getElement());
+                c.setCid((int) tuple.getScore());
                 categories.add(c);
+//            for (String name : categorys) {
+//                Category c = new Category();
+//                c.setCname(name);
+//                categories.add(c);
             }
         }
         return categories;
